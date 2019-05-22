@@ -6,3 +6,4 @@ use App\Kernel;
 
 $kernel = new Kernel();
 
+$kernel->init();
