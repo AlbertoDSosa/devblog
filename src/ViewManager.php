@@ -17,7 +17,7 @@ class ViewManager
     }
 
     public function render ($view, $args=[]){
-        if($args !=null) {
+        if($args != null) {
             extract($args, EXTR_SKIP);
         }
 
@@ -39,7 +39,6 @@ class ViewManager
             $twig = new \Twig_Environment($loader);
         }
 
-        // Kint::dump($twig->render($template, $args));
         echo $twig->render($template, $args);
     }
 }

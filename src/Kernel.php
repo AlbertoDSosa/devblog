@@ -3,10 +3,9 @@
 namespace App;
 
 use Kint;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use App\controllers\HomeController;
 use DI\ContainerBuilder;
+use App\interfaces\LoggerInterface;
+use App\routing\Web;
 
 class Kernel
 {
@@ -15,15 +14,19 @@ class Kernel
 
     public function __construct(){
         $this->container = $this->createContainer();
+        $this->logger = new LoggerManager();
+        $this->container->set(LoggerInterface::class, $this->logger);
     }
 
     public function init()
     {
-        $this->logger = new Logger('Kernel');
-        $this->logger->pushHandler (new StreamHandler(dirname(__DIR__).'/var/log/dev.log'));
         $this->logger->info("Arrancado Kernel");
-        $homeController = new HomeController($this->container); 
-        $homeController->index();
+
+        $httpMethod = $_SERVER['REQUEST_METHOD'];
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        
+        $route = $this->container->get(RoutingManager::class);
+        $route->dispatch($httpMethod, $uri, Web::getDispatcher());
     }
 
     public function createContainer()
